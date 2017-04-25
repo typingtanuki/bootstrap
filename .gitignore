@@ -1,0 +1,8 @@
+.idea
+.gradle
+build
+out
+conf
+logs
+src/main/java/com/github/typingtanuki/bootstrap/Bootstrap.java
+src/main/java/com/github/typingtanuki/bootstrap/TestMain.java
