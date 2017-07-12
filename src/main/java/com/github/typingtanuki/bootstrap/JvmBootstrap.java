@@ -136,6 +136,33 @@ public abstract class JvmBootstrap {
      */
     protected abstract String classpath();
 
+    /**
+     * @return Extra JVM properties to give to the new jvm. Those will be added to the ones in jvmOptionFile. Can be null.
+     */
+    protected abstract List<String> jvmProperties();
+
+    /**
+     * Called every time a jvm option is extracted from the jvmOptionFile.
+     * Override if you want to process the options before giving them to the JVM.
+     *
+     * @param option the extracted option
+     * @return the processed option
+     */
+    protected String jvmOptionCallback(String option) {
+        return option;
+    }
+
+    /**
+     * Called every time a program option is extracted from the programOptionFile.
+     * Override if you want to process the values before giving them to the JVM.
+     *
+     * @param option the extracted option
+     * @param value  the extracted value for that option
+     * @return the processed value
+     */
+    protected String programOptionCallback(String option, String value) {
+        return value;
+    }
 
     /**
      * @return the current classpath + the result of {@link JvmBootstrap#classpath()} (if any)
@@ -189,9 +216,15 @@ public abstract class JvmBootstrap {
         for (String rawLine : lines) {
             String line = cleanLine(rawLine);
             if (!line.isEmpty()) {
-                arguments.add(line);
+                arguments.add(jvmOptionCallback(line));
             }
         }
+
+        List<String> extra = jvmProperties();
+        if (extra != null) {
+            arguments.addAll(extra);
+        }
+
         return arguments;
     }
 
@@ -224,6 +257,9 @@ public abstract class JvmBootstrap {
                 if (value.isEmpty()) {
                     throw new BootstrapException("Invalid setting detected, missing value for " + line);
                 }
+
+                value = programOptionCallback(key, value);
+
                 if (key.length() == 1) {
                     arguments.add(argumentsType.getShortArg() + key + "=" + value);
                 } else {

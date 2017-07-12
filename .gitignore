@@ -1,8 +1,10 @@
-.idea
+gradle
+gradlew
+gradlew.bat
 .gradle
+
+bootstrap.*
+
 build
 out
-conf
-logs
-src/main/java/com/github/typingtanuki/bootstrap/Bootstrap.java
-src/main/java/com/github/typingtanuki/bootstrap/TestMain.java
+bintray.gradle
