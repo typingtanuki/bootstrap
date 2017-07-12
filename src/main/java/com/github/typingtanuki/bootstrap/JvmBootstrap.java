@@ -39,9 +39,10 @@ public abstract class JvmBootstrap {
      * Parse the configuration and start the JVM.
      * For a version which does not send exception but sets and exit code, use {@link JvmBootstrap#bootSafely()}
      *
+     * @return The process created by java
      * @throws BootstrapException If there have been any problems while reading configuration or starting the JVM
      */
-    public void boot() throws BootstrapException {
+    public Process boot() throws BootstrapException {
         //Parse the settings
         List<String> jvmArguments = parseJvmArguments();
         List<String> programArguments = parseProgramArguments();
@@ -75,7 +76,7 @@ public abstract class JvmBootstrap {
         builder.redirectOutput(stdout.toFile());
         builder.redirectError(stderr.toFile());
         try {
-            builder.start();
+            return builder.start();
         } catch (IOException e) {
             throw new BootstrapException(
                     "Error starting process with arguments: \r\n" + String.join(" ", startupCommand), e);
@@ -91,10 +92,12 @@ public abstract class JvmBootstrap {
      * <li>10: Configuration problem</li>
      * <li>11: Unexpected problem</li>
      * </ul>
+     *
+     * @return The process created by java or <code>null</code> if not process could be created
      */
-    public void bootSafely() {
+    public Process bootSafely() {
         try {
-            boot();
+            return boot();
         } catch (BootstrapException e) {
             System.err.println("Error during bootstrap: " + e.getMessage());
             e.printStackTrace();
@@ -104,6 +107,7 @@ public abstract class JvmBootstrap {
             e.printStackTrace();
             System.exit(11);
         }
+        return null;
     }
 
     /**
@@ -148,7 +152,7 @@ public abstract class JvmBootstrap {
      * @param option the extracted option
      * @return the processed option
      */
-    protected String jvmOptionCallback(String option) {
+    protected String jvmOptionCallback(String option) throws BootstrapException {
         return option;
     }
 
@@ -160,7 +164,7 @@ public abstract class JvmBootstrap {
      * @param value  the extracted value for that option
      * @return the processed value
      */
-    protected String programOptionCallback(String option, String value) {
+    protected String programOptionCallback(String option, String value) throws BootstrapException {
         return value;
     }
 
