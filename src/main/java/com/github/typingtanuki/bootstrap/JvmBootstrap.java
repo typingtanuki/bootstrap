@@ -26,13 +26,16 @@ public abstract class JvmBootstrap {
      */
     private final ArgumentsType argumentsType;
 
+    private final ArgumentsSeparator argumentsSeparator;
+
     public JvmBootstrap() {
-        this(ArgumentsType.SINGLE_DOUBLE_DASH);
+        this(ArgumentsType.SINGLE_DOUBLE_DASH, ArgumentsSeparator.EQUALS);
     }
 
-    public JvmBootstrap(ArgumentsType argumentsType) {
+    public JvmBootstrap(ArgumentsType argumentsType, ArgumentsSeparator argumentsSeparator) {
         super();
         this.argumentsType = argumentsType;
+        this.argumentsSeparator = argumentsSeparator;
     }
 
     /**
@@ -265,9 +268,9 @@ public abstract class JvmBootstrap {
                 value = programOptionCallback(key, value);
 
                 if (key.length() == 1) {
-                    arguments.add(argumentsType.getShortArg() + key + "=" + value);
+                    arguments.add(argumentsType.getShortArg() + key + argumentsSeparator.getSeparator() + value);
                 } else {
-                    arguments.add(argumentsType.getLongArg() + key + "=" + value);
+                    arguments.add(argumentsType.getLongArg() + key + argumentsSeparator.getSeparator() + value);
                 }
             }
         }
