@@ -268,9 +268,25 @@ public abstract class JvmBootstrap {
                 value = programOptionCallback(key, value);
 
                 if (key.length() == 1) {
-                    arguments.add(argumentsType.getShortArg() + key + argumentsSeparator.getSeparator() + value);
+                    switch (argumentsSeparator) {
+                        case EQUALS:
+                            arguments.add(argumentsType.getShortArg() + key + argumentsSeparator.getSeparator() + value);
+                            break;
+                        case SPACE:
+                            arguments.add(argumentsType.getShortArg() + key);
+                            arguments.add(value);
+                            break;
+                    }
                 } else {
-                    arguments.add(argumentsType.getLongArg() + key + argumentsSeparator.getSeparator() + value);
+                    switch (argumentsSeparator) {
+                        case EQUALS:
+                            arguments.add(argumentsType.getLongArg() + key + argumentsSeparator.getSeparator() + value);
+                            break;
+                        case SPACE:
+                            arguments.add(argumentsType.getLongArg() + key);
+                            arguments.add(value);
+                            break;
+                    }
                 }
             }
         }
